@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { addCard } from "../utils/cardUtils.js";
+import { makeCard } from "../utils/cardUtils.js";
 import Card from "./Card.jsx";
 
-export default function Dealer() {
+export default function Dealer({ onHandStart }) {
   const [cards, setCards] = useState([]);
   const [totalValue, setTotalValue] = useState(0);
 
@@ -27,31 +27,24 @@ export default function Dealer() {
       : setTotalValue(total);
   }, [cards]);
 
-  function playHand() {
-    const hand = [...cards];
-    if (hand[1]) hand[1].flipped = true;
-    setCards(hand);
+  const startHand = () => {
+    const card1 = makeCard();
+    const card2 = makeCard();
+    card2.flipped = false;
+    const newCards = [card1, card2];
+    setCards(newCards);
+    
+    if (onHandStart) onHandStart(newCards);
 
-    setTimeout(() => {
-      
-      const calcTotal = () => {
-
-      }
-
-     
-    }, 100);
-
-    while (totalValue < 17) {
-      addCard(cards, setCards);
-    }
   }
+
+  
 
   return (
     <div>
       <h2>Dealer's Hand</h2>
       <div>Total Value: {totalValue}</div>
-      <button onClick={() => addCard(cards, setCards)}>Add</button>
-      <button onClick={() => playHand()}>Play Hand</button>
+      <button onClick={startHand}>Start Hand</button>
       <div>
         {cards.map((card) => {
           return (

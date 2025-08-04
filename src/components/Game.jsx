@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import Player from "./Player.jsx";
-import Card from "./Card.jsx";
+import Dealer from "./Dealer.jsx";
+
+
+
 export default function Game() {
   const [playerHand, setPlayerHand] = useState([]);
   const [dealerHand, setDealerHand] = useState([]);
@@ -13,10 +16,15 @@ export default function Game() {
     setPlayerHand(hand);
   };
 
+  const handleDealerHandStart = (hand) => {
+    setDealerHand(hand);
+  }
+
   return (
     <div>
       <button onClick={startGame}>Play game</button>
       <Player onHandStart={handlePlayerHandStart} />
+      <Dealer onHandStart={handleDealerHandStart}/>
     </div>
   );
 }

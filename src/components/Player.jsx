@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { addCard } from "../utils/cardUtils.js";
+import { makeCard } from "../utils/cardUtils.js";
 import Card from "./Card.jsx";
 
 export default function Player({onHandStart}) {
@@ -27,13 +27,13 @@ export default function Player({onHandStart}) {
 
 
   const startHand = () => {
-    const newCards = [addCard(), addCard()];
+    const newCards = [makeCard(), makeCard()];
     setCards(newCards);
     if (onHandStart) onHandStart(cards);
   }
 
   function addCardToHand() {
-    const newCard = addCard();
+    const newCard = makeCard();
     setCards([...cards, newCard]);
   }
 

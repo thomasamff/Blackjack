@@ -1,4 +1,4 @@
-export function addCard() {
+export function makeCard() {
   const randomNum = Math.floor(Math.random() * 52) + 1;
   const suit = randomNum % 4;
   let num = (randomNum % 13) + 1;
