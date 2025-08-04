@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { makeCard } from "../utils/cardUtils.js";
 import Card from "./Card.jsx";
 
-export default function Player({ cards, setCards, gameState }) {
+export default function Player({ cards, setCards, gameState, stand }) {
   const [totalValue, setTotalValue] = useState(0);
   const canAdd = gameState;
 
@@ -38,8 +38,8 @@ export default function Player({ cards, setCards, gameState }) {
       <h2>Player's Hand</h2>
       <div>Total Value: {totalValue}</div>
       <button disabled={!canAdd} onClick={() => addCardToHand()}>Hit</button>
-      
-      <div>
+      <button disabled={!canAdd} onClick={stand}>Stand</button>
+      <div style = {{display: "flex", flexDirection: "row"}}>
         {cards.map((card) => {
           return (
             <Card

@@ -12,7 +12,6 @@ export default function Game() {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-
   const startGame = () => {
     setGameStarted(true);
     // Reset hands
@@ -52,6 +51,40 @@ export default function Game() {
     setPlayerHand([]);
     setDealerHand([]);
   };
+  
+
+  function calculateValue(cards) {
+    let total = 0;
+    let aceCount = 0;
+    for (const card of cards) {
+      if (card.flipped) {
+        total += card.value;
+        if (card.value === 1) aceCount++;
+      }
+    }
+
+    return aceCount > 0 && total + 10 <= 21 ? total + 10 : total;
+  }
+
+
+  function playDealerHand() {
+      const flipCards = dealerHand.map((card, index) => {
+        if (index === 1) return { ...card, flipped: true };
+        return card;
+      });
+      setDealerHand(flipCards);
+      dealerHit(flipCards);
+    }
+  
+    async function dealerHit(initialCards) {
+      let dealerHand = [...initialCards];
+      while (calculateValue(dealerHand) < 17) {
+        await delay(500);
+        dealerHand = [...dealerHand, makeCard(dealerHand.length)];
+        setDealerHand(dealerHand);
+      }
+  
+    }
 
   return (
     <div>
@@ -61,6 +94,7 @@ export default function Game() {
         cards={playerHand}
         setCards={setPlayerHand}
         gameState={gameStarted}
+        stand={playDealerHand}
       />
       <Dealer cards={dealerHand} setCards={setDealerHand} />
     </div>
