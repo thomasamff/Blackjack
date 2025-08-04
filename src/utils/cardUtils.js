@@ -1,4 +1,4 @@
-export function addCard(cards, setCards) {
+export function addCard() {
   const randomNum = Math.floor(Math.random() * 52) + 1;
   const suit = randomNum % 4;
   let num = (randomNum % 13) + 1;
@@ -24,10 +24,10 @@ export function addCard(cards, setCards) {
       ? "♣️ " + num
       : "♦️ " + num;
 
-  const newCard = {
-    pos: cards.length + 1,
+  return {
     text: str,
     value: val,
+    flipped: true
   };
-  setCards([...cards, newCard]);
+  
 }

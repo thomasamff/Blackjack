@@ -1,13 +1,11 @@
 import Layout from "./components/Layout";
-import Player from "./components/Player";
-import Dealer from "./components/Dealer";
+import Game from "./components/Game";
 
 function App() {
   return (
     <Layout>
       <main>
-        <Player/>
-        <Dealer/>
+        <Game/>
       </main>
     </Layout>
   );

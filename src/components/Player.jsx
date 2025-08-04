@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { addCard } from "../utils/cardUtils.js";
 import Card from "./Card.jsx";
 
-export default function Player() {
+export default function Player({onHandStart}) {
   const [cards, setCards] = useState([]);
   const [totalValue, setTotalValue] = useState(0);
 
@@ -25,20 +25,32 @@ export default function Player() {
       : setTotalValue(total);
   }, [cards]);
 
+
+  const startHand = () => {
+    const newCards = [addCard(), addCard()];
+    setCards(newCards);
+    if (onHandStart) onHandStart(cards);
+  }
+
+  function addCardToHand() {
+    const newCard = addCard();
+    setCards([...cards, newCard]);
+  }
+
   return (
     <div>
       <h2>Player's Hand</h2>
+      <button onClick={startHand}>Start Hand</button>
       <div>Total Value: {totalValue}</div>
-      <button onClick={() => addCard(cards, setCards)}>Add</button>
+      <button onClick={() => addCardToHand()}>Add</button>
 
       <div>
         {cards.map((card) => {
           return (
             <Card
-              key={card.pos}
-              id={card.pos}
               text={card.text}
               value={card.value}
+              flipped={card.flipped}
             />
           );
         })}
