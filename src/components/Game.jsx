@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Player from "./Player.jsx";
 import Dealer from "./Dealer.jsx";
 import { makeCard } from "../utils/cardUtils.js";
@@ -12,6 +12,7 @@ export default function Game() {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
+
   const startGame = () => {
     setGameStarted(true);
     // Reset hands
@@ -21,6 +22,7 @@ export default function Game() {
     dealCards();
   };
 
+  // Deal cards with a delay
   async function dealCards() {
     let dealerHand = [];
     let playerHand = [];
@@ -28,7 +30,6 @@ export default function Game() {
     const card = makeCard(1);
     card.flipped = false;
 
-    console.log("Dealing cards...");
     for (let i = 0; i < 4; i++) {
       await delay(500);
       if (i === 3) {
@@ -43,8 +44,6 @@ export default function Game() {
         setDealerHand(dealerHand);
       }
     }
-
-    
   }
 
   const resetGame = () => {
