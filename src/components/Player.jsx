@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { makeCard } from "../utils/cardUtils.js";
 import Card from "./Card.jsx";
 
-export default function Player({onHandStart}) {
-  const [cards, setCards] = useState([]);
+export default function Player({ cards, setCards}) {
   const [totalValue, setTotalValue] = useState(0);
 
   useEffect(() => {
@@ -26,12 +25,6 @@ export default function Player({onHandStart}) {
   }, [cards]);
 
 
-  const startHand = () => {
-    const newCards = [makeCard(), makeCard()];
-    setCards(newCards);
-    if (onHandStart) onHandStart(cards);
-  }
-
   function addCardToHand() {
     const newCard = makeCard();
     setCards([...cards, newCard]);
@@ -40,7 +33,6 @@ export default function Player({onHandStart}) {
   return (
     <div>
       <h2>Player's Hand</h2>
-      <button onClick={startHand}>Start Hand</button>
       <div>Total Value: {totalValue}</div>
       <button onClick={() => addCardToHand()}>Add</button>
 

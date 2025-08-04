@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { makeCard } from "../utils/cardUtils.js";
 import Card from "./Card.jsx";
 
-export default function Dealer({ onHandStart }) {
-  const [cards, setCards] = useState([]);
+export default function Dealer({ cards, setCards }) {
   const [totalValue, setTotalValue] = useState(0);
 
   useEffect(() => {
@@ -27,16 +26,6 @@ export default function Dealer({ onHandStart }) {
       : setTotalValue(total);
   }, [cards]);
 
-  const startHand = () => {
-    const card1 = makeCard();
-    const card2 = makeCard();
-    card2.flipped = false;
-    const newCards = [card1, card2];
-    setCards(newCards);
-    
-    if (onHandStart) onHandStart(newCards);
-
-  }
 
   
 
@@ -44,7 +33,6 @@ export default function Dealer({ onHandStart }) {
     <div>
       <h2>Dealer's Hand</h2>
       <div>Total Value: {totalValue}</div>
-      <button onClick={startHand}>Start Hand</button>
       <div>
         {cards.map((card) => {
           return (
