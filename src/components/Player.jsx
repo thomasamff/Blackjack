@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { makeCard } from "../utils/cardUtils.js";
 import Card from "./Card.jsx";
 
-export default function Player({ cards, setCards}) {
+export default function Player({ cards, setCards }) {
   const [totalValue, setTotalValue] = useState(0);
 
   useEffect(() => {

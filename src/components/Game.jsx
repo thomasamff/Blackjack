@@ -22,12 +22,15 @@ export default function Game() {
 
   };
 
-  
+  const resetGame = () => {
+    setPlayerHand([]);
+    setDealerHand([]);
+  }
 
   return (
     <div>
       <button onClick={startGame}>Play game</button>
-      <button>Reset</button>
+      <button onClick={resetGame}>Reset</button>
       <Player cards={playerHand} setCards={setPlayerHand}/>
       <Dealer cards={dealerHand} setCards={setDealerHand}/>
 

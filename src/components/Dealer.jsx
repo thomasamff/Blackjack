@@ -27,8 +27,6 @@ export default function Dealer({ cards, setCards }) {
   }, [cards]);
 
 
-  
-
   return (
     <div>
       <h2>Dealer's Hand</h2>
