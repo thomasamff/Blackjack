@@ -1,4 +1,4 @@
-export function makeCard() {
+export function makeCard(position) {
   const randomNum = Math.floor(Math.random() * 52) + 1;
   const suit = randomNum % 4;
   let num = (randomNum % 13) + 1;
@@ -25,6 +25,7 @@ export function makeCard() {
       : "♦️ " + num;
 
   return {
+    position: position,
     text: str,
     value: val,
     flipped: true
