@@ -6,15 +6,6 @@ export default function Player({ cards, setCards, canAdd, setCanAdd, stand }) {
   const [totalValue, setTotalValue] = useState(0);
   const [val, setVal] = useState(0);
 
-  // checks for initial blackjack
-  useEffect(() => {
-    if (cards.length === 2) {
-      if (val === 21) {
-        setCanAdd(false);
-        stand(val);
-      }
-    }
-  }, []);
 
   // calculates the total value of the cards
   useEffect(() => {

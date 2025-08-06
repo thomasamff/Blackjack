@@ -21,9 +21,8 @@ export default function Game() {
     // Reset hands
     setPlayerHand([]);
     setDealerHand([]);
-    
+
     dealCards();
-   
   };
 
   // Deal cards with a delay
@@ -47,6 +46,30 @@ export default function Game() {
         setDealerHand(dealerHand);
       }
     }
+    
+    // player has blackjack
+    if (calculateValue(playerHand) === 21) {
+      const flipCards = dealerHand.map((card, index) => {
+        if (index === 1) return { ...card, flipped: true };
+        return card;
+      });
+      setDealerHand(flipCards);
+      setResult("You win! Blackjack!");
+    }
+
+    // dealer has blackjack
+    if (calculateValue(dealerHand) === 21) {
+      const flipCards = dealerHand.map((card, index) => {
+        if (index === 1) return { ...card, flipped: true };
+        return card;
+      });
+      setDealerHand(flipCards);
+      setResult("Dealer has blackjack! You lose!");
+      setGameStarted(false);
+      setPlayButton(true);
+      return;
+    }
+
     setGameStarted(true);
   }
 
@@ -56,29 +79,16 @@ export default function Game() {
     // Reset hands
     setPlayerHand([]);
     setDealerHand([]);
-
   };
 
-
-  useEffect(()=>{
-
-  },[setResult]);
+  useEffect(() => {}, [setResult]);
 
   function playDealerHand(val) {
-    
-
     const flipCards = dealerHand.map((card, index) => {
       if (index === 1) return { ...card, flipped: true };
       return card;
     });
     setDealerHand(flipCards);
-
-    if (val === 21 && playerHand.length === 2) {
-      setResult("Blackjack! You win!");
-      setGameStarted(false);
-      setPlayButton(true);
-      return;
-    }
 
     if (val > 21) {
       setResult("You bust! Dealer wins!");
@@ -86,7 +96,7 @@ export default function Game() {
       setPlayButton(true);
       return;
     }
-    
+
     dealerHit(flipCards, val);
   }
 
@@ -101,7 +111,7 @@ export default function Game() {
     let dealerVal = calculateValue(dealerHand);
     let playerVal = val;
     if (dealerVal > 21) {
-      setResult("Dealer busts! You win!");
+      setResult("You win! Dealer busts!");
     } else if (dealerVal === playerVal) {
       setResult("It's a push!");
     } else if (dealerVal > playerVal) {
@@ -128,7 +138,9 @@ export default function Game() {
 
   return (
     <div>
-      <button disabled={!playButton} onClick={startGame}>Play game</button>
+      <button disabled={!playButton} onClick={startGame}>
+        Play game
+      </button>
       <button onClick={resetGame}>Reset</button>
       <Player
         cards={playerHand}
@@ -137,8 +149,7 @@ export default function Game() {
         setCanAdd={setGameStarted}
         stand={playDealerHand}
       />
-      <Dealer cards={dealerHand} setCards={setDealerHand}  />
-
+      <Dealer cards={dealerHand} />
 
       {result && <h2>Result: {result}</h2>}
     </div>

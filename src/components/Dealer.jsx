@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Card from "./Card.jsx";
 
-export default function Dealer({ cards, setCards }) {
+export default function Dealer({ cards }) {
   const [totalValue, setTotalValue] = useState(0);
 
   useEffect(() => {
