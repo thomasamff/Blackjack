@@ -6,6 +6,17 @@ export default function Player({ cards, setCards, canAdd, setCanAdd, stand }) {
   const [totalValue, setTotalValue] = useState(0);
   const [val, setVal] = useState(0);
 
+  // checks for initial blackjack
+  useEffect(() => {
+    if (cards.length === 2) {
+      if (val === 21) {
+        setCanAdd(false);
+        stand(val);
+      }
+    }
+  }, []);
+
+  // calculates the total value of the cards
   useEffect(() => {
     let total = 0;
     let aceCount = 0;
@@ -22,16 +33,19 @@ export default function Player({ cards, setCards, canAdd, setCanAdd, stand }) {
     if (aceValue < 21 && aceCount > 0) {
       setTotalValue(total + "," + aceValue);
       setVal(aceValue);
-    } else if (aceValue === 21) {
-      setTotalValue(21);
-      setVal(21);
     } else {
-      setTotalValue(total);
-      setVal(total);
+      if (aceValue === 21) {
+        setTotalValue(21);
+        setVal(21);
+      } else {
+        setTotalValue(total);
+        setVal(total);
+      }
     }
-    
   }, [cards]);
 
+  
+  // adds a new card to the player's hand
   function addCardToHand() {
     let n = cards.length;
     const newCard = makeCard(n);
@@ -45,7 +59,7 @@ export default function Player({ cards, setCards, canAdd, setCanAdd, stand }) {
       <button disabled={!canAdd} onClick={() => addCardToHand()}>
         Hit
       </button>
-      <button disabled={!canAdd} onClick={() => stand(val)}>
+      <button disabled={!canAdd} onClick={() => {stand(val); setCanAdd(false);}}>
         Stand
       </button>
       <div style={{ display: "flex", flexDirection: "row" }}>
