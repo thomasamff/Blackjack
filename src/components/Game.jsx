@@ -48,7 +48,6 @@ export default function Game() {
       }
     }
     setGameStarted(true);
-    console.log(gameStarted);
   }
 
   const resetGame = () => {
@@ -60,35 +59,38 @@ export default function Game() {
 
   };
 
-  function playerResult(val) {
-    playDealerHand();
-    if (val === 21) {
-      setResult("WIN");
-    } else if (val > 21) {
-      setResult("BUST");
-    } else {
-      if (val === calculateValue(dealerHand)) {
-        setResult("TIE");
-      } else {
-        setResult("WIN");
-      }
-    }
-  }
 
   useEffect(()=>{
 
   },[setResult]);
 
-  function playDealerHand() {
+  function playDealerHand(val) {
+    
+
     const flipCards = dealerHand.map((card, index) => {
       if (index === 1) return { ...card, flipped: true };
       return card;
     });
     setDealerHand(flipCards);
-    dealerHit(flipCards);
+
+    if (val === 21 && playerHand.length === 2) {
+      setResult("Blackjack! You win!");
+      setGameStarted(false);
+      setPlayButton(true);
+      return;
+    }
+
+    if (val > 21) {
+      setResult("You bust! Dealer wins!");
+      setGameStarted(false);
+      setPlayButton(true);
+      return;
+    }
+    
+    dealerHit(flipCards, val);
   }
 
-  async function dealerHit(initialCards) {
+  async function dealerHit(initialCards, val) {
     let dealerHand = [...initialCards];
     while (calculateValue(dealerHand) < 17) {
       await delay(500);
@@ -96,6 +98,19 @@ export default function Game() {
       setDealerHand(dealerHand);
     }
 
+    let dealerVal = calculateValue(dealerHand);
+    let playerVal = val;
+    if (dealerVal > 21) {
+      setResult("Dealer busts! You win!");
+    } else if (dealerVal === playerVal) {
+      setResult("It's a push!");
+    } else if (dealerVal > playerVal) {
+      setResult("Dealer wins!");
+    } else {
+      setResult("You win!");
+    }
+
+    setPlayButton(true);
   }
 
   function calculateValue(cards) {
@@ -120,7 +135,7 @@ export default function Game() {
         setCards={setPlayerHand}
         canAdd={gameStarted}
         setCanAdd={setGameStarted}
-        stand={playerResult}
+        stand={playDealerHand}
       />
       <Dealer cards={dealerHand} setCards={setDealerHand}  />
 
