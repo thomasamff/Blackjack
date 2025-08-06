@@ -25,7 +25,7 @@ export function makeCard(position) {
       : "♦️ " + num;
 
   return {
-    position: position,
+    id: position,
     text: str,
     value: val,
     flipped: true

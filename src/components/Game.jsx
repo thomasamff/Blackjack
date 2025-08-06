@@ -7,18 +7,22 @@ export default function Game() {
   const [playerHand, setPlayerHand] = useState([]);
   const [dealerHand, setDealerHand] = useState([]);
   const [gameStarted, setGameStarted] = useState(false);
+  const [playButton, setPlayButton] = useState(true);
+  const [result, setResult] = useState("");
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   const startGame = () => {
-    setGameStarted(true);
+    setGameStarted(false);
+    setPlayButton(false);
     // Reset hands
     setPlayerHand([]);
     setDealerHand([]);
-
+    
     dealCards();
+   
   };
 
   // Deal cards with a delay
@@ -34,7 +38,6 @@ export default function Game() {
       if (i === 3) {
         dealerHand = [...dealerHand, card];
         setDealerHand(dealerHand);
-
       } else if (i % 2 === 0) {
         playerHand = [...playerHand, makeCard(playerHand.length)];
         setPlayerHand(playerHand);
@@ -43,15 +46,42 @@ export default function Game() {
         setDealerHand(dealerHand);
       }
     }
+    setGameStarted(true);
+    console.log(gameStarted);
   }
 
   const resetGame = () => {
     setGameStarted(false);
+    setPlayButton(true);
     // Reset hands
     setPlayerHand([]);
     setDealerHand([]);
+
   };
-  
+
+  function playerResult(val) {
+    playDealerHand();
+    console.log(val);
+  }
+
+  function playDealerHand() {
+    const flipCards = dealerHand.map((card, index) => {
+      if (index === 1) return { ...card, flipped: true };
+      return card;
+    });
+    setDealerHand(flipCards);
+    dealerHit(flipCards);
+  }
+
+  async function dealerHit(initialCards) {
+    let dealerHand = [...initialCards];
+    while (calculateValue(dealerHand) < 17) {
+      await delay(500);
+      dealerHand = [...dealerHand, makeCard(dealerHand.length)];
+      setDealerHand(dealerHand);
+    }
+
+  }
 
   function calculateValue(cards) {
     let total = 0;
@@ -66,35 +96,16 @@ export default function Game() {
     return aceCount > 0 && total + 10 <= 21 ? total + 10 : total;
   }
 
-
-  function playDealerHand() {
-      const flipCards = dealerHand.map((card, index) => {
-        if (index === 1) return { ...card, flipped: true };
-        return card;
-      });
-      setDealerHand(flipCards);
-      dealerHit(flipCards);
-    }
-  
-    async function dealerHit(initialCards) {
-      let dealerHand = [...initialCards];
-      while (calculateValue(dealerHand) < 17) {
-        await delay(500);
-        dealerHand = [...dealerHand, makeCard(dealerHand.length)];
-        setDealerHand(dealerHand);
-      }
-  
-    }
-
   return (
     <div>
-      <button onClick={startGame}>Play game</button>
+      <button disabled={!playButton} onClick={startGame}>Play game</button>
       <button onClick={resetGame}>Reset</button>
       <Player
         cards={playerHand}
         setCards={setPlayerHand}
-        gameState={gameStarted}
-        stand={playDealerHand}
+        canAdd={gameStarted}
+        setCanAdd={setGameStarted}
+        stand={playerResult}
       />
       <Dealer cards={dealerHand} setCards={setDealerHand} />
     </div>

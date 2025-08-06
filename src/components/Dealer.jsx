@@ -3,7 +3,7 @@ import Card from "./Card.jsx";
 
 export default function Dealer({ cards, setCards }) {
   const [totalValue, setTotalValue] = useState(0);
-  
+
   useEffect(() => {
     let total = 0;
     let aceCount = 0;
@@ -30,10 +30,15 @@ export default function Dealer({ cards, setCards }) {
       <h2>Dealer's Hand</h2>
       <div>Total Value: {totalValue}</div>
 
-      <div style = {{display: "flex", flexDirection: "row"}}>
+      <div style={{ display: "flex", flexDirection: "row" }}>
         {cards.map((card) => {
           return (
-            <Card text={card.text} value={card.value} flipped={card.flipped} />
+            <Card
+              id={card.id}
+              text={card.text}
+              value={card.value}
+              flipped={card.flipped}
+            />
           );
         })}
       </div>

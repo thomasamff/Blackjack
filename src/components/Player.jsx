@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { makeCard } from "../utils/cardUtils.js";
 import Card from "./Card.jsx";
 
-export default function Player({ cards, setCards, gameState, stand }) {
+export default function Player({ cards, setCards, canAdd, setCanAdd, stand }) {
   const [totalValue, setTotalValue] = useState(0);
-  const canAdd = gameState;
-
+  const [val, setVal] = useState(0);
 
   useEffect(() => {
     let total = 0;
@@ -19,13 +18,19 @@ export default function Player({ cards, setCards, gameState, stand }) {
         aceValue = total + 10;
       }
     }
-    aceValue < 21 && aceCount > 0
-      ? setTotalValue(total + "," + aceValue)
-      : aceValue === 21
-      ? setTotalValue(21)
-      : setTotalValue(total);
-  }, [cards]);
 
+    if (aceValue < 21 && aceCount > 0) {
+      setTotalValue(total + "," + aceValue);
+      setVal(aceValue);
+    } else if (aceValue === 21) {
+      setTotalValue(21);
+      setVal(21);
+    } else {
+      setTotalValue(total);
+      setVal(total);
+    }
+    
+  }, [cards]);
 
   function addCardToHand() {
     let n = cards.length;
@@ -37,12 +42,17 @@ export default function Player({ cards, setCards, gameState, stand }) {
     <div>
       <h2>Player's Hand</h2>
       <div>Total Value: {totalValue}</div>
-      <button disabled={!canAdd} onClick={() => addCardToHand()}>Hit</button>
-      <button disabled={!canAdd} onClick={stand}>Stand</button>
-      <div style = {{display: "flex", flexDirection: "row"}}>
+      <button disabled={!canAdd} onClick={() => addCardToHand()}>
+        Hit
+      </button>
+      <button disabled={!canAdd} onClick={() => stand(val)}>
+        Stand
+      </button>
+      <div style={{ display: "flex", flexDirection: "row" }}>
         {cards.map((card) => {
           return (
             <Card
+              id={card.id}
               text={card.text}
               value={card.value}
               flipped={card.flipped}
