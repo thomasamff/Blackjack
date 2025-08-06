@@ -44,7 +44,14 @@ export default function Player({ cards, setCards, canAdd, setCanAdd, stand }) {
     }
   }, [cards]);
 
-  
+  // returns when busts
+  useEffect(() => {
+    if (val > 21) {
+      setCanAdd(false);
+      stand(val);
+    }
+  },[val]);
+
   // adds a new card to the player's hand
   function addCardToHand() {
     let n = cards.length;
