@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Player from "./Player.jsx";
 import Dealer from "./Dealer.jsx";
 import { makeCard } from "../utils/cardUtils.js";
@@ -17,6 +17,7 @@ export default function Game() {
   const startGame = () => {
     setGameStarted(false);
     setPlayButton(false);
+    setResult("");
     // Reset hands
     setPlayerHand([]);
     setDealerHand([]);
@@ -61,8 +62,22 @@ export default function Game() {
 
   function playerResult(val) {
     playDealerHand();
-    console.log(val);
+    if (val === 21) {
+      setResult("WIN");
+    } else if (val > 21) {
+      setResult("BUST");
+    } else {
+      if (val === calculateValue(dealerHand)) {
+        setResult("TIE");
+      } else {
+        setResult("WIN");
+      }
+    }
   }
+
+  useEffect(()=>{
+
+  },[setResult]);
 
   function playDealerHand() {
     const flipCards = dealerHand.map((card, index) => {
@@ -107,7 +122,10 @@ export default function Game() {
         setCanAdd={setGameStarted}
         stand={playerResult}
       />
-      <Dealer cards={dealerHand} setCards={setDealerHand} />
+      <Dealer cards={dealerHand} setCards={setDealerHand}  />
+
+
+      {result && <h2>Result: {result}</h2>}
     </div>
   );
 }
