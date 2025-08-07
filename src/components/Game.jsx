@@ -8,7 +8,11 @@ export default function Game() {
   const [dealerHand, setDealerHand] = useState([]);
   const [gameStarted, setGameStarted] = useState(false);
   const [playButton, setPlayButton] = useState(true);
+  const [bj, setBj] = useState(false);
   const [result, setResult] = useState("");
+
+  const [bal, setBal] = useState(100);
+  const [bet, setBet] = useState(0);
 
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -16,6 +20,7 @@ export default function Game() {
 
   // play game button - starts the game
   const startGame = () => {
+    setBj(false);
     setGameStarted(false);
     setPlayButton(false);
     setResult("");
@@ -23,6 +28,9 @@ export default function Game() {
     setPlayerHand([]);
     setDealerHand([]);
 
+    const bet = Number(document.getElementById("bet-amount").value);
+    setBet(bet);
+    setBal(bal-bet);
     dealCards();
   };
 
@@ -30,8 +38,11 @@ export default function Game() {
   const resetGame = () => {
     setGameStarted(false);
     setPlayButton(true);
+    setResult("");
     setPlayerHand([]);
     setDealerHand([]);
+    document.getElementById("bet-amount").value = "";
+    setBet(0);
   };
 
   // Deal cards with a delay
@@ -47,8 +58,9 @@ export default function Game() {
       if (i === 3) {
         dealerHand = [...dealerHand, card];
         setDealerHand(dealerHand);
-      } else if (i % 2 === 0) {
+      } else if (i%2 === 0) {
         playerHand = [...playerHand, makeCard(playerHand.length)];
+        
         setPlayerHand(playerHand);
       } else {
         dealerHand = [...dealerHand, makeCard(dealerHand.length)];
@@ -63,7 +75,11 @@ export default function Game() {
         return card;
       });
       setDealerHand(flipCards);
-      setResult("You win! Blackjack!");
+      setResult(`Player BJ | +${bet * 2.5}`);
+      setBal(bal + (bet * 1.5));
+      setGameStarted(false);
+      setPlayButton(true);
+      return;
     }
     // TODO: insurance option if dealer's first card shows ace
     // dealer has blackjack
@@ -73,7 +89,7 @@ export default function Game() {
         return card;
       });
       setDealerHand(flipCards);
-      setResult("Dealer has blackjack! You lose!");
+      setResult(`Dealer BJ | -${bet}`);
       setGameStarted(false);
       setPlayButton(true);
       return;
@@ -85,6 +101,8 @@ export default function Game() {
   // updates the result state
   useEffect(() => {}, [setResult]);
 
+  useEffect(() => {}, [setBal,setBet]);
+
   // plays dealer's hand when player stands
   function playDealerHand(val) {
     const flipCards = dealerHand.map((card, index) => {
@@ -94,7 +112,7 @@ export default function Game() {
     setDealerHand(flipCards);
 
     if (val > 21) {
-      setResult("You bust! Dealer wins!");
+      setResult(`Player Bust | -$${bet}`);
       setGameStarted(false);
       setPlayButton(true);
       return;
@@ -115,13 +133,16 @@ export default function Game() {
     let dealerVal = calculateValue(dealerHand);
     let playerVal = val;
     if (dealerVal > 21) {
-      setResult("You win! Dealer busts!");
+      setResult(`Dealer Bust | +$${bet}`);
+      setBal(bal+(bet * 2));
     } else if (dealerVal === playerVal) {
-      setResult("It's a push!");
+      setResult("Dealer Push| +$0");
+      setBal(bal+bet);
     } else if (dealerVal > playerVal) {
-      setResult("Dealer wins!");
+      setResult(`Dealer Win | -$${bet}`);
     } else {
-      setResult("You win!");
+      setResult(`Player Win | +$${bet}`);
+      setBal(bal+(bet * 2));
     }
 
     setPlayButton(true);
@@ -149,7 +170,10 @@ export default function Game() {
         </button>
         <button onClick={resetGame}>Reset</button>
       </div>
-
+      <div className = "money">
+        <h3>Balance: ${bal}</h3>
+        <input className="bet" id="bet-amount" disabled={!playButton} type = "number" placeholder="Bet Amount"/>
+      </div>
       <Dealer cards={dealerHand} />
       <Player
         cards={playerHand}
@@ -157,6 +181,7 @@ export default function Game() {
         canAdd={gameStarted}
         setCanAdd={setGameStarted}
         stand={playDealerHand}
+        bj={bj}
       />
       {result && <h2 className="result">Result: {result}</h2>}
     </div>

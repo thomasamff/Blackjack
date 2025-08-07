@@ -43,6 +43,15 @@ export default function Player({ cards, setCards, canAdd, setCanAdd, stand }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [val]);
 
+  // disable's options after getting 21
+  useEffect(() => {
+    if (val === 21) {
+      setCanAdd(false);
+      stand(val);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [val]);
+
   // adds a new card to the player's hand
   function addCardToHand() {
     let n = cards.length;
