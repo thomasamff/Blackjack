@@ -14,6 +14,7 @@ export default function Game() {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
+  // play game button - starts the game
   const startGame = () => {
     setGameStarted(false);
     setPlayButton(false);
@@ -23,6 +24,14 @@ export default function Game() {
     setDealerHand([]);
 
     dealCards();
+  };
+
+  // reset button - resets game
+  const resetGame = () => {
+    setGameStarted(false);
+    setPlayButton(true);
+    setPlayerHand([]);
+    setDealerHand([]);
   };
 
   // Deal cards with a delay
@@ -46,7 +55,7 @@ export default function Game() {
         setDealerHand(dealerHand);
       }
     }
-    
+
     // player has blackjack
     if (calculateValue(playerHand) === 21) {
       const flipCards = dealerHand.map((card, index) => {
@@ -56,7 +65,7 @@ export default function Game() {
       setDealerHand(flipCards);
       setResult("You win! Blackjack!");
     }
-
+    // TODO: insurance option if dealer's first card shows ace
     // dealer has blackjack
     if (calculateValue(dealerHand) === 21) {
       const flipCards = dealerHand.map((card, index) => {
@@ -73,16 +82,10 @@ export default function Game() {
     setGameStarted(true);
   }
 
-  const resetGame = () => {
-    setGameStarted(false);
-    setPlayButton(true);
-    // Reset hands
-    setPlayerHand([]);
-    setDealerHand([]);
-  };
-
+  // updates the result state
   useEffect(() => {}, [setResult]);
 
+  // plays dealer's hand when player stands
   function playDealerHand(val) {
     const flipCards = dealerHand.map((card, index) => {
       if (index === 1) return { ...card, flipped: true };
@@ -100,6 +103,7 @@ export default function Game() {
     dealerHit(flipCards, val);
   }
 
+  // helper function that performs dealer's turn - determines result
   async function dealerHit(initialCards, val) {
     let dealerHand = [...initialCards];
     while (calculateValue(dealerHand) < 17) {
@@ -123,6 +127,7 @@ export default function Game() {
     setPlayButton(true);
   }
 
+  // calculate total of given hand
   function calculateValue(cards) {
     let total = 0;
     let aceCount = 0;
@@ -137,11 +142,15 @@ export default function Game() {
   }
 
   return (
-    <div>
-      <button disabled={!playButton} onClick={startGame}>
-        Play game
-      </button>
-      <button onClick={resetGame}>Reset</button>
+    <div className="game-area">
+      <div className="game-buttons">
+        <button disabled={!playButton} onClick={startGame}>
+          Play game
+        </button>
+        <button onClick={resetGame}>Reset</button>
+      </div>
+
+      <Dealer cards={dealerHand} />
       <Player
         cards={playerHand}
         setCards={setPlayerHand}
@@ -149,9 +158,7 @@ export default function Game() {
         setCanAdd={setGameStarted}
         stand={playDealerHand}
       />
-      <Dealer cards={dealerHand} />
-
-      {result && <h2>Result: {result}</h2>}
+      {result && <h2 className="result">Result: {result}</h2>}
     </div>
   );
 }

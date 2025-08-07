@@ -6,7 +6,6 @@ export default function Player({ cards, setCards, canAdd, setCanAdd, stand }) {
   const [totalValue, setTotalValue] = useState(0);
   const [val, setVal] = useState(0);
 
-
   // calculates the total value of the cards
   useEffect(() => {
     let total = 0;
@@ -41,7 +40,8 @@ export default function Player({ cards, setCards, canAdd, setCanAdd, stand }) {
       setCanAdd(false);
       stand(val);
     }
-  },[val]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [val]);
 
   // adds a new card to the player's hand
   function addCardToHand() {
@@ -51,16 +51,25 @@ export default function Player({ cards, setCards, canAdd, setCanAdd, stand }) {
   }
 
   return (
-    <div>
+    <div className="player-area">
       <h2>Player's Hand</h2>
       <div>Total Value: {totalValue}</div>
-      <button disabled={!canAdd} onClick={() => addCardToHand()}>
-        Hit
-      </button>
-      <button disabled={!canAdd} onClick={() => {stand(val); setCanAdd(false);}}>
-        Stand
-      </button>
-      <div style={{ display: "flex", flexDirection: "row" }}>
+      <div className="player-buttons">
+        <button disabled={!canAdd} onClick={() => addCardToHand()}>
+          Hit
+        </button>
+        <button
+          disabled={!canAdd}
+          onClick={() => {
+            stand(val);
+            setCanAdd(false);
+          }}
+        >
+          Stand
+        </button>
+      </div>
+
+      <div className="card-container" id="player-cards">
         {cards.map((card) => {
           return (
             <Card

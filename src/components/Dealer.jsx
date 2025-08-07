@@ -26,11 +26,11 @@ export default function Dealer({ cards }) {
   }, [cards]);
 
   return (
-    <div>
+    <div className="dealer-area">
       <h2>Dealer's Hand</h2>
       <div>Total Value: {totalValue}</div>
 
-      <div style={{ display: "flex", flexDirection: "row" }}>
+      <div className="card-container" id="dealer-cards">
         {cards.map((card) => {
           return (
             <Card
