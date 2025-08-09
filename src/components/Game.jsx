@@ -8,9 +8,8 @@ export default function Game() {
   const [dealerHand, setDealerHand] = useState([]);
   const [gameStarted, setGameStarted] = useState(false);
   const [playButton, setPlayButton] = useState(true);
-  const [bj, setBj] = useState(false);
   const [result, setResult] = useState("");
-
+  const [bj, setBj] = useState(false);
   const [bal, setBal] = useState(100);
   const [bet, setBet] = useState(0);
 
@@ -20,22 +19,26 @@ export default function Game() {
 
   // play game button - starts the game
   const startGame = () => {
-    setBj(false);
-    setGameStarted(false);
-    setPlayButton(false);
-    setResult("");
-    // Reset hands
-    setPlayerHand([]);
-    setDealerHand([]);
-
     const bet = Number(document.getElementById("bet-amount").value);
-    setBet(bet);
-    setBal(bal-bet);
-    dealCards();
+
+    if (bet <= bal) {
+      setGameStarted(false);
+      setPlayButton(false);
+      setResult("");
+      setBj(false);
+      // Reset hands
+      setPlayerHand([]);
+      setDealerHand([]);
+
+      setBet(bet);
+      setBal(bal - bet);
+      dealCards();
+    }
   };
 
   // reset button - resets game
   const resetGame = () => {
+    setBj(false);
     setGameStarted(false);
     setPlayButton(true);
     setResult("");
@@ -58,9 +61,9 @@ export default function Game() {
       if (i === 3) {
         dealerHand = [...dealerHand, card];
         setDealerHand(dealerHand);
-      } else if (i%2 === 0) {
+      } else if (i % 2 === 0) {
         playerHand = [...playerHand, makeCard(playerHand.length)];
-        
+
         setPlayerHand(playerHand);
       } else {
         dealerHand = [...dealerHand, makeCard(dealerHand.length)];
@@ -76,14 +79,14 @@ export default function Game() {
       });
       setDealerHand(flipCards);
       setResult(`Player BJ | +${bet * 2.5}`);
-      setBal(bal + (bet * 1.5));
+      setBal(bal + bet * 1.5);
       setGameStarted(false);
       setPlayButton(true);
+      setBj(true);
       return;
-    }
-    // TODO: insurance option if dealer's first card shows ace
-    // dealer has blackjack
-    if (calculateValue(dealerHand) === 21) {
+    } else if (calculateValue(dealerHand) === 21) {
+      // TODO: insurance option if dealer's first card shows ace
+      // dealer has blackjack
       const flipCards = dealerHand.map((card, index) => {
         if (index === 1) return { ...card, flipped: true };
         return card;
@@ -93,15 +96,15 @@ export default function Game() {
       setGameStarted(false);
       setPlayButton(true);
       return;
+    } else {
+      setGameStarted(true);
     }
-
-    setGameStarted(true);
   }
 
   // updates the result state
   useEffect(() => {}, [setResult]);
 
-  useEffect(() => {}, [setBal,setBet]);
+  useEffect(() => {}, [setBal, setBet]);
 
   // plays dealer's hand when player stands
   function playDealerHand(val) {
@@ -134,15 +137,15 @@ export default function Game() {
     let playerVal = val;
     if (dealerVal > 21) {
       setResult(`Dealer Bust | +$${bet}`);
-      setBal(bal+(bet * 2));
+      setBal(bal + bet * 2);
     } else if (dealerVal === playerVal) {
       setResult("Dealer Push| +$0");
-      setBal(bal+bet);
+      setBal(bal + bet);
     } else if (dealerVal > playerVal) {
       setResult(`Dealer Win | -$${bet}`);
     } else {
       setResult(`Player Win | +$${bet}`);
-      setBal(bal+(bet * 2));
+      setBal(bal + bet * 2);
     }
 
     setPlayButton(true);
@@ -162,17 +165,55 @@ export default function Game() {
     return aceCount > 0 && total + 10 <= 21 ? total + 10 : total;
   }
 
+  const performMulti = (multi) => {
+    let bet = Number(document.getElementById("bet-amount").value);
+    if (bet > 0) {
+      if (bet * multi > bal) {
+        bet = bal;
+        setBet(bet);
+      } else {
+        bet *= multi;
+        setBet(bet);
+      }
+      document.getElementById("bet-amount").value = `${bet}`;
+    }
+  };
+
   return (
     <div className="game-area">
-      <div className="game-buttons">
-        <button disabled={!playButton} onClick={startGame}>
-          Play game
-        </button>
-        <button onClick={resetGame}>Reset</button>
+      <div className="player-actions">
+        <div className="game-buttons">
+          <button disabled={!playButton} onClick={startGame}>
+            Play game
+          </button>
+          <button onClick={resetGame}>Reset</button>
+        </div>
       </div>
-      <div className = "money">
+      <div className="money">
         <h3>Balance: ${bal}</h3>
-        <input className="bet" id="bet-amount" disabled={!playButton} type = "number" placeholder="Bet Amount"/>
+        <div className="betting-input">
+          <input
+            className="bet"
+            id="bet-amount"
+            disabled={!playButton}
+            type="number"
+            placeholder="Bet Amount"
+          />
+          <button
+            className="multi"
+            disabled={!playButton}
+            onClick={() => performMulti(2)}
+          >
+            2x
+          </button>
+          <button
+            className="multi"
+            disabled={!playButton}
+            onClick={() => performMulti(0.5)}
+          >
+            0.5x
+          </button>
+        </div>
       </div>
       <Dealer cards={dealerHand} />
       <Player

@@ -2,7 +2,14 @@ import React, { useEffect, useState } from "react";
 import { makeCard } from "../utils/cardUtils.js";
 import Card from "./Card.jsx";
 
-export default function Player({ cards, setCards, canAdd, setCanAdd, stand }) {
+export default function Player({
+  cards,
+  setCards,
+  canAdd,
+  setCanAdd,
+  stand,
+  bj,
+}) {
   const [totalValue, setTotalValue] = useState(0);
   const [val, setVal] = useState(0);
 
@@ -45,7 +52,7 @@ export default function Player({ cards, setCards, canAdd, setCanAdd, stand }) {
 
   // disable's options after getting 21
   useEffect(() => {
-    if (val === 21) {
+    if (val === 21 && !bj) {
       setCanAdd(false);
       stand(val);
     }
@@ -63,19 +70,21 @@ export default function Player({ cards, setCards, canAdd, setCanAdd, stand }) {
     <div className="player-area">
       <h2>Player's Hand</h2>
       <div>Total Value: {totalValue}</div>
-      <div className="player-buttons">
-        <button disabled={!canAdd} onClick={() => addCardToHand()}>
-          Hit
-        </button>
-        <button
-          disabled={!canAdd}
-          onClick={() => {
-            stand(val);
-            setCanAdd(false);
-          }}
-        >
-          Stand
-        </button>
+      <div className="player-actions">
+        <div className="player-buttons">
+          <button disabled={!canAdd} onClick={() => addCardToHand()}>
+            Hit
+          </button>
+          <button
+            disabled={!canAdd}
+            onClick={() => {
+              stand(val);
+              setCanAdd(false);
+            }}
+          >
+            Stand
+          </button>
+        </div>
       </div>
 
       <div className="card-container" id="player-cards">
