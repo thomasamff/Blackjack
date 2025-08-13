@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { makeCard } from "../utils/cardUtils.js";
+import { makeCard } from "../utils/Card.js";
 import Card from "./Card.jsx";
 
 export default function Player({

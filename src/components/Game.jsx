@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Player from "./Player.jsx";
 import Dealer from "./Dealer.jsx";
-import { makeCard } from "../utils/cardUtils.js";
+import { makeCard } from "../utils/Card.js";
 
 export default function Game() {
   const [playerHand, setPlayerHand] = useState([]);
